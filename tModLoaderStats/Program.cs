@@ -72,10 +72,10 @@ namespace tModLoaderStats
             if (!Directory.Exists(FolderPath + "data"))
                 Directory.CreateDirectory(FolderPath + "data");
 
-            string csv = "Rank\tDisplay Name\tDownloads Total\tDownloads Yesterday\n";
+            string csv = "Rank,Display Name,Downloads Total,Downloads Yesterday\n";
             for (int i = 0; i < modList.Count; i++)
             {
-                csv += $"{i}\t{modList[i].FullName.Escape()}\t{modList[i].DownloadsTotal}\t{modList[i].DownloadsYesterday}\n";
+                csv += $"{i + 1},{modList[i].FullName.Escape()},{modList[i].DownloadsTotal},{modList[i].DownloadsYesterday}\n";
             }
 
             File.WriteAllText(FolderPath + @$"data/data_{DateTime.Now.ToShortDateString()}.csv", csv);
@@ -110,7 +110,7 @@ namespace tModLoaderStats
 
         public static string Escape(this string s)
         {
-            return s.Replace("\"", @" ");
+            return s.Replace("\"", @" ").Replace(","," ");
         }
     }
 }
