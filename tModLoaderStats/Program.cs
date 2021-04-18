@@ -4,15 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace tModLoaderStats
 {
     class Program
     {
-        [STAThread]
         static void Main(string[] args)
         {
             ScrapeMods();
@@ -20,16 +17,16 @@ namespace tModLoaderStats
 
         private static void ScrapeMods()
         {
-            Debug.WriteLine("Waiting for javid.ddns.net...");
+            Console.WriteLine("Waiting for javid.ddns.net...");
             var website = GetHtmlAsync("http://javid.ddns.net/tModLoader/modmigrationprogressalltime.php").Result;
 
-            Debug.WriteLine("Parse-ing HTML");
+            Console.WriteLine("Parse-ing HTML");
             var decendants = website.DocumentNode.Descendants("table").ToArray()[0];
             var list = decendants.Descendants("tr").ToArray();
 
             var modList = new List<(string FullName, int DownloadsTotal, int DownloadsYesterday)>();
 
-            Debug.WriteLine("Getting Data");
+            Console.WriteLine("Getting Data");
             for (int i = 1; i < list.Length; i++)
             {
                 var iteminfo = list[i].Descendants("td").ToArray();
@@ -41,7 +38,7 @@ namespace tModLoaderStats
                 );
                 modList.Add(mod);
             }
-            Debug.WriteLine("Done");
+            Console.WriteLine("Done");
 
             ShowResults(modList);
 
@@ -50,18 +47,19 @@ namespace tModLoaderStats
 
         private static void ShowResults(List<(string FullName, int DownloadsTotal, int DownloadsYesterday)> modList)
         {
-            Debug.WriteLine("There are " + modList.Count + " mods in the modbrowser");
-            Debug.WriteLine("The mods with the most downloads are: \n");
+            Console.Clear();
+            Console.WriteLine("There are " + modList.Count + " mods in the modbrowser");
+            Console.WriteLine("The mods with the most downloads are: \n");
 
             for (int i = 0; i <= 10; i++)
             {
-                Debug.WriteLine($"{i + 1}. {modList[i].FullName} : {modList[i].DownloadsTotal}");
+                Console.WriteLine($"{i + 1}. {modList[i].FullName} : {modList[i].DownloadsTotal}");
             }
 
-            Debug.WriteLine("\nThe download count of all mods combined is: " + modList.Sum(x => x.DownloadsTotal));
-            Debug.WriteLine("the average download count is: " + modList.Average(x => x.DownloadsTotal));
-            Debug.WriteLine("the median download count is: " + modList.Median(x => x.DownloadsTotal));
-            Debug.WriteLine("There are " + modList.Where(x => x.DownloadsYesterday > 5).LongCount() + " dead mods");
+            Console.WriteLine("\nThe download count of all mods combined is: " + modList.Sum(x => x.DownloadsTotal));
+            Console.WriteLine("the average download count is: " + modList.Average(x => x.DownloadsTotal));
+            Console.WriteLine("the median download count is: " + modList.Median(x => x.DownloadsTotal));
+            Console.WriteLine("There are " + modList.Where(x => x.DownloadsYesterday > 5).LongCount() + " dead mods");
         }
 
         private static void SaveData(List<(string FullName, int DownloadsTotal, int DownloadsYesterday)> modList)
