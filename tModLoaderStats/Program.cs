@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -74,7 +75,7 @@ namespace tModLoaderStats
             string csv = "Rank\tDisplay Name\tDownloads Total\tDownloads Yesterday\n";
             for (int i = 0; i < modList.Count; i++)
             {
-                csv += $"{i}\t{modList[i].FullName}\t{modList[i].DownloadsTotal}\t{modList[i].DownloadsYesterday}\n";
+                csv += $"{i}\t{modList[i].FullName.Escape()}\t{modList[i].DownloadsTotal}\t{modList[i].DownloadsYesterday}\n";
             }
 
             File.WriteAllText(FolderPath + @$"data/data_{DateTime.Now.ToShortDateString()}.csv", csv);
@@ -105,6 +106,11 @@ namespace tModLoaderStats
         public static string Remove(this string s, string stringToRemove)
         {
             return s.Replace(stringToRemove, "");
+        }
+
+        public static string Escape(this string s)
+        {
+            return s.Replace("\"", @" ");
         }
     }
 }
